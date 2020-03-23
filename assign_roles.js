@@ -8,7 +8,9 @@ for (let playa of params.getAll('player')) {
     }
 }
 var me = params.get('me')
-playas.push(me)
+if(! playas.includes(me)) {
+    playas.push(me)
+}
 playas.sort()
 
 const numMinionsTable = {
