@@ -77,7 +77,7 @@ if(minions.includes(me)) {
     
 switch(role) {
     case 'merlin':
-        peopleKnown = minions.filter(function(element){return element == roleToPlayer('mordred', minions, specialMinions)})
+        peopleKnown = minions.filter(function(element){return element != roleToPlayer('mordred', minions, specialMinions)})
         break;
     case 'percival':
         peopleKnown.push(roleToPlayer('morgana', minions, specialMinions))
@@ -92,15 +92,10 @@ switch(role) {
 shuffleArray(peopleKnown)
 var msg = ''
 if(minions.includes(me)) {
-    allies = peopleKnown.join('n')
     msg = 'You are a minion of Mordred! Your role is ' + role + '.\n' + 'Your allies are: \n' + peopleKnown.join('\n')
 } else if (role  === 'merlin') {
-    knownMinions = peopleKnown.filter(function(element){return element != roleToPlayer('mordred', minions, specialMinions)}).join('\n')
-    allies = allies.filter(function(element){return element != me})
-    msg = 'You are a loyal servant of Arthur!! Your role is ' + role + '.\n' + 'Your enemies are:\n' + knownMinions.join('\n')
+    msg = 'You are a loyal servant of Arthur!! Your role is ' + role + '.\n' + 'Your enemies are:\n' + peopleKnown.join('\n')
 } else if (role === 'percival') {
-    allies = peopleKnown
-    knownMinions = peopleKnown
     msg = 'You are a loyal servant of Arthur!! Your role is ' + role + '.\n' + 'Merlin and Morgana might be: \n' + peopleKnown.join('\n')
 } else {
     msg = 'You are a loyal servant of Arthur!! Your role is ' + role + '.\n' + 'You know: ???'
