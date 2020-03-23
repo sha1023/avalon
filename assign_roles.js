@@ -1,18 +1,15 @@
-//import * as seedrandom from 'http://davidbau.com/encode/seedrandom.js';
 var params = new URLSearchParams(document.location.search.substring(1))
 var seed = params.getAll('random_seed')
 Math.seedrandom(seed);
 var playas = [];
 for (let playa of params.getAll('player')) {
     if( playa.trim()) {
-        //playas.push(playa.trim())
         playas.push(playa.trim().toLocaleLowerCase())
     }
 }
 var me = params.get('me')
 playas.push(me)
 playas.sort()
-console.log(playas.length)
 
 const numMinionsTable = {
     5: 2,
@@ -23,7 +20,6 @@ const numMinionsTable = {
     10: 4
 }
 let numMinions = numMinionsTable[playas.length]
-console.log(numMinions)
 
 /*
 Randomize array in-place using Durstenfeld shuffle algorithm 
@@ -39,11 +35,8 @@ function shuffleArray(array) {
 }
 
 shuffleArray(playas)
-console.log(playas)
 minions = playas.slice(0, numMinions)
-console.log(minions)
 servants = playas.slice(numMinions, playas.length)
-console.log(servants)
 
 function getSortedFlags(params, flags) {
     let sortedFlags = [];
@@ -56,9 +49,7 @@ function getSortedFlags(params, flags) {
     return sortedFlags
 }
 let specialServants = getSortedFlags(params, ['merlin','percival'])
-console.log(specialServants)
 let specialMinions = getSortedFlags(params, ['morgana', 'assassin', 'oberon', 'mordred'])
-console.log(specialMinions)
 
 function roleToPlayer(role, players, roleAssignments){
     if(roleAssignments.includes(role)){
@@ -87,7 +78,6 @@ if(minions.includes(me)) {
 switch(role) {
     case 'merlin':
         peopleKnown = minions.filter(function(element){return element == roleToPlayer('mordred', minions, specialMinions)})
-        //
         break;
     case 'percival':
         peopleKnown.push(roleToPlayer('morgana', minions, specialMinions))
@@ -115,15 +105,8 @@ if(minions.includes(me)) {
 } else {
     msg = 'You are a loyal servant of Arthur!! Your role is ' + role + '.\n' + 'You know: ???'
 }
-console.log(msg)
 
 var identity_paragraph = document.createElement('p');
 identity_paragraph.innerHTML = 'There are ' + minions.length + ' Minions of Mordred and ' + servants.length + ' Loyal Servants of Arthur.\n' + msg
 
-//identity_paragraph.innerHTML = player;
-//identity_paragraph.innerHTML += playa;
-//identity_paragraph.innerHTML += playa;
-//identity_paragraph.innerHTML += playa;
-//identity_paragraph.innerHTML = params.getAll('player');
-//identity_paragraph.innerHTML += playa;
 document.getElementById('main_div').append(identity_paragraph)
