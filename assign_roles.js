@@ -4,7 +4,7 @@ Math.seedrandom(seed);
 var playas = [];
 for (let playa of params.getAll('player')) {
     if( playa.trim()) {
-        playas.push(playa.trim().toLocaleLowerCase())
+        playas.push(playa.trim())
     }
 }
 var me = params.get('me')
@@ -12,6 +12,23 @@ if(! playas.includes(me)) {
     playas.push(me)
 }
 playas.sort()
+
+function generateSecretPads(players, numberEntries) {
+    var pads = []
+    for (i = 0; i < players.length; i++) {
+        var playerPad = []
+        for (j = 0; j < numberEntries; j++) {
+            if (Math.random()>.5) {
+                playerPad.push(1)
+            } else {
+                playerPad.push(0)
+            }
+        }
+        pads.push(playerPad)
+    }
+    return pads
+}
+const secretPads = generateSecretPads(playas, 5)
 
 const numMinionsTable = {
     5: 2,
@@ -50,8 +67,8 @@ function getSortedFlags(params, flags) {
     sortedFlags.sort()
     return sortedFlags
 }
-let specialServants = getSortedFlags(params, ['merlin','percival'])
-let specialMinions = getSortedFlags(params, ['morgana', 'assassin', 'oberon', 'mordred'])
+let specialServants = getSortedFlags(params, ['Merlin','Percival'])
+let specialMinions = getSortedFlags(params, ['Morgana', 'Assassin', 'Oberon', 'Mordred'])
 
 function roleToPlayer(role, players, roleAssignments){
     if(roleAssignments.includes(role)){
@@ -62,42 +79,50 @@ function roleToPlayer(role, players, roleAssignments){
 
 if (minions.includes(me)){
     role = roleToPlayer(me, specialMinions, minions)
+    document.getElementById('team').innerHTML = 'Mordred'
     if(! role) {
-        role = 'Minion of Mordred'
+        role = 'Generic Minion'
     }
 } else {
     role = roleToPlayer(me, specialServants, servants)
+    document.getElementById('team').innerHTML = 'Arthur'
     if(! role) {
-        role = 'Loyal Servant of Arthur'
+        role = 'Generic Peasant'
     }
 }
+document.getElementById('role').innerHTML = role
 
 let peopleKnown = [];
 if(minions.includes(me)) {
-    peopleKnown = minions.filter(function(element){return element != me && element != roleToPlayer('oberon', minions, specialMinions)})
+    peopleKnown = minions.filter(function(element){return element != me && element != roleToPlayer('Oberon', minions, specialMinions)})
+} else {
+    peopleKnown = ['?', '?', '?']
 }
     
 switch(role) {
-    case 'merlin':
-        peopleKnown = minions.filter(function(element){return element != roleToPlayer('mordred', minions, specialMinions)})
+    case 'Merlin':
+        peopleKnown = minions.filter(function(element){return element != roleToPlayer('Mordred', minions, specialMinions)})
+        
+        document.getElementById('knowledge_label').innerHTML = 'Known Minions'
         break;
-    case 'percival':
-        peopleKnown.push(roleToPlayer('morgana', minions, specialMinions))
-        peopleKnown.push(roleToPlayer('merlin', servants, specialServants))
+    case 'Percival':
+        peopleKnown = [roleToPlayer('Morgana', minions, specialMinions), roleToPlayer('Merlin', servants, specialServants)]
+        document.getElementById('knowledge_label').innerHTML = 'People you know'
         break;
-    case 'oberon':
+    case 'Oberon':
         peopleKnown = [me]
         break;
     default:
 }
 
 shuffleArray(peopleKnown)
+document.getElementById('knowledge').innerHTML = peopleKnown.join(', ')
 var msg = ''
 if(minions.includes(me)) {
     msg = 'You are a minion of Mordred! Your role is ' + role + '.\n' + 'Your allies are: \n' + peopleKnown.join('\n')
-} else if (role  === 'merlin') {
+} else if (role  === 'Merlin') {
     msg = 'You are a loyal servant of Arthur!! Your role is ' + role + '.\n' + 'Your enemies are:\n' + peopleKnown.join('\n')
-} else if (role === 'percival') {
+} else if (role === 'Percival') {
     msg = 'You are a loyal servant of Arthur!! Your role is ' + role + '.\n' + 'Merlin and Morgana might be: \n' + peopleKnown.join('\n')
 } else {
     msg = 'You are a loyal servant of Arthur!! Your role is ' + role + '.\n' + 'You know: ???'
@@ -107,3 +132,4 @@ var identity_paragraph = document.createElement('p');
 identity_paragraph.innerHTML = 'There are ' + minions.length + ' Minions of Mordred and ' + servants.length + ' Loyal Servants of Arthur.\n' + msg
 
 document.getElementById('main_div').append(identity_paragraph)
+
