@@ -2,18 +2,26 @@ var params = new URLSearchParams(document.location.search.substring(1))
 var seed = params.getAll('random_seed')
 Math.seedrandom(seed);
 var playas = [];
-for (let playa of params.getAll('player')) {
+for (i=0; i<10; i++){
+    playa = params.get('player' + i)
     if( playa.trim()) {
         playas.push(playa.trim())
     }
 }
-var me = params.get('me')
-if(! playas.includes(me)) {
-    playas.push(me)
-}
+me = params.get(params.get('me')).trim()
 playas.sort()
 rank = playas.indexOf(me)
 
+function validateGameParams(me, minions, servants, specialMinions, specialServants) {
+   numPlayers = minions.length + servants.length
+   if (numPlayers < 5 || numPlayers > 10) {
+        document.getElementById('broken_game').innerHTML = 'Invalid game must have between 5 and 10 players.'
+   } else if(!(minions.includes(me)||servants.includes(me))) {
+        document.getElementById('broken_game').innerHTML = 'Invalid game you must be a valid player.'
+   } else if(minions.length < specialMinions.length || servants.length < specialServants.length){
+        document.getElementById('broken_game').innerHTML = 'Invalid game more special characters than eligible players.'
+   }
+}
 translateValue = [
     ['dog', 'cow'],
     ['red', 'green'],
@@ -59,6 +67,9 @@ const numMinionsTable = {
     10: 4
 }
 let numMinions = numMinionsTable[playas.length]
+if(!numMinions) {
+    numMinions = 0
+}
 
 /*
 Randomize array in-place using Durstenfeld shuffle algorithm
@@ -74,6 +85,7 @@ function shuffleArray(array) {
 }
 
 shuffleArray(playas)
+console.log(playas)
 minions = playas.slice(0, numMinions)
 servants = playas.slice(numMinions, playas.length)
 
@@ -228,3 +240,4 @@ function populateBoard(numPlayas){
     }
 }
 populateBoard(playas.length)
+validateGameParams(me, minions, servants, specialMinions, specialServants)
