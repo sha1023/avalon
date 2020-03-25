@@ -192,6 +192,7 @@ function clearVotes(){
     for(element of document.getElementsByName('vote')) {
         element.value = ''
     }
+}
 
 
 function populateBoard(numPlayas){
