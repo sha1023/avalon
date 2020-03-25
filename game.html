@@ -13,23 +13,62 @@
             <td id="knowledge"></td>
         </tr>
     </table>
-    <table id="game_board">
+    <hr>
+    <table id="roles active:">
         <tr>
-            <th>Firstname</th>
-            <th>Lastname</th>
-            <th>Age</th>
+            <th>Num Minions:</th>
+            <td id="num_minions"></td>
         </tr>
         <tr>
-            <td>Jill</td>
-            <td>Smith</td>
-            <td>50</td>
+            <th>Num Servants:</th>
+            <td id="num_servants"></td>
         </tr>
         <tr>
-            <td>Eve</td>
-            <td>Jackson</td>
-            <td>94</td>
+            <th>Special Servants:</th>
+            <td id="special_servants"></td>
+        </tr>
+        <tr>
+            <th>Special Minions:</th>
+            <td id="special_minions"></td>
         </tr>
     </table>
+    <hr>
+    <table id="game_board">
+        <tr>
+            <th>Quest 1</th>
+            <th>Quest 2</th>
+            <th>Quest 3</th>
+            <th>Quest 4</th>
+            <th>Quest 5</th>
+        </tr>
+        <tr>
+            <td id="q1"></td>
+            <td id="q2"></td>
+            <td id="q3"></td>
+            <td id="q4"></td>
+            <td id="q5"></td>
+        </tr>
+    </table>
+<div>
+    <hr>
+    <input type="radio" id="success" name="outcome" value="success" checked>
+    <label for="success">Success!</label><br>
+    <input type="radio" id="fail" name="outcome" value="fail">
+    <label for="fail">Fail.</label><br>
+    <input id="submit_card" type="button" value="get card value" onclick="submitCard();" /> <br>
+    <p id="card_value">See card value here. </p>
+</div>
+<div>
+    <hr>
+    <label for="vote">Vote: </label><input type="text" id="vote" name="vote" /><br/>
+    <label for="vote">Vote: </label><input type="text" id="vote" name="vote" /><br/>
+    <label for="vote">Vote: </label><input type="text" id="vote" name="vote" /><br/>
+    <label for="vote">Vote: </label><input type="text" id="vote" name="vote" /><br/>
+    <label for="vote">Vote: </label><input type="text" id="vote" name="vote" /><br/>
+    <input type="button" value="Tally Votes." onclick="tallyVotes()"/>
+    <input type="button" value="Clear Votes" onclick="clearVotes()"/>
+    <p id="vote_result"> See result here.</p>
+</div>
 </div>
 <script type="text/javascript" src="seedrandom.js">
 //Import Seed random to be used by my next script.

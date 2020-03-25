@@ -12,6 +12,26 @@ if(! playas.includes(me)) {
     playas.push(me)
 }
 playas.sort()
+rank = playas.indexOf(me)
+
+translateValue = [
+    ['dog', 'cow'],
+    ['red', 'green'],
+    ['steel', 'coal'],
+    ['big', 'small'],
+    ['king', 'pin'],
+    ['tree', 'grass'],
+    ['donut', 'danish'],
+    ['cube', 'ball'],
+    ['up', 'down'],
+    ['now', 'later'],
+]
+
+var inverseValue = {}
+for(i=0; i<translateValue.length; i++) {
+    inverseValue[translateValue[i][0]] = i
+    inverseValue[translateValue[i][1]] = i
+}
 
 function generateSecretPads(players, numberEntries) {
     var pads = []
@@ -28,7 +48,7 @@ function generateSecretPads(players, numberEntries) {
     }
     return pads
 }
-const secretPads = generateSecretPads(playas, 5)
+const secretPads = generateSecretPads(playas, 1000)
 
 const numMinionsTable = {
     5: 2,
@@ -41,7 +61,7 @@ const numMinionsTable = {
 let numMinions = numMinionsTable[playas.length]
 
 /*
-Randomize array in-place using Durstenfeld shuffle algorithm 
+Randomize array in-place using Durstenfeld shuffle algorithm
 Taken from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 */
 function shuffleArray(array) {
@@ -69,6 +89,12 @@ function getSortedFlags(params, flags) {
 }
 let specialServants = getSortedFlags(params, ['Merlin','Percival'])
 let specialMinions = getSortedFlags(params, ['Morgana', 'Assassin', 'Oberon', 'Mordred'])
+
+document.getElementById('num_minions').innerHTML = minions.length
+document.getElementById('num_servants').innerHTML = servants.length
+document.getElementById('special_servants').innerHTML = specialServants.join(', ')
+document.getElementById('special_minions').innerHTML = specialMinions.join(', ')
+
 
 function roleToPlayer(role, players, roleAssignments){
     if(roleAssignments.includes(role)){
@@ -98,11 +124,11 @@ if(minions.includes(me)) {
 } else {
     peopleKnown = ['?', '?', '?']
 }
-    
+
 switch(role) {
     case 'Merlin':
         peopleKnown = minions.filter(function(element){return element != roleToPlayer('Mordred', minions, specialMinions)})
-        
+
         document.getElementById('knowledge_label').innerHTML = 'Known Minions'
         break;
     case 'Percival':
@@ -117,19 +143,87 @@ switch(role) {
 
 shuffleArray(peopleKnown)
 document.getElementById('knowledge').innerHTML = peopleKnown.join(', ')
-var msg = ''
-if(minions.includes(me)) {
-    msg = 'You are a minion of Mordred! Your role is ' + role + '.\n' + 'Your allies are: \n' + peopleKnown.join('\n')
-} else if (role  === 'Merlin') {
-    msg = 'You are a loyal servant of Arthur!! Your role is ' + role + '.\n' + 'Your enemies are:\n' + peopleKnown.join('\n')
-} else if (role === 'Percival') {
-    msg = 'You are a loyal servant of Arthur!! Your role is ' + role + '.\n' + 'Merlin and Morgana might be: \n' + peopleKnown.join('\n')
-} else {
-    msg = 'You are a loyal servant of Arthur!! Your role is ' + role + '.\n' + 'You know: ???'
+
+var cardsSubmitted = 0
+
+function getCardValue(cardsSubmitted, rank, succeeded){
+    var value = (secretPads[rank][cardsSubmitted] + succeeded) % 2
+    return cardsSubmitted + '-' + translateValue[rank][value]
 }
 
-var identity_paragraph = document.createElement('p');
-identity_paragraph.innerHTML = 'There are ' + minions.length + ' Minions of Mordred and ' + servants.length + ' Loyal Servants of Arthur.\n' + msg
+function submitCard() {
+    var succeeded = 0
+    if(document.getElementById('success').checked) {
+        succeeded = 1
+    } else {
+        succeeded = 0
+    }
+    cardsSubmitted++
+    cardValue = getCardValue(cardsSubmitted, rank, succeeded)
+    document.getElementById('card_value').innerHTML = cardValue
+}
 
-document.getElementById('main_div').append(identity_paragraph)
+function invertCardValue(cardValue) {
+    cardParts = cardValue.split('-')
+    missionNumber = cardParts[0]
+    cardEncoded = cardParts[1]
+    cardRank = inverseValue[cardEncoded]
+    return (secretPads[cardRank][missionNumber] + translateValue[cardRank].indexOf(cardEncoded)) % 2
+}
 
+function tallyVotes(){
+    failCount = 0
+    missionStatus = 'Success!'
+    for(element of document.getElementsByName('vote')) {
+        voteValue = element.value.trim()
+        if(!voteValue){
+            continue
+        }
+        cardValue = invertCardValue(voteValue)
+        if(cardValue == 0){
+            failCount++
+            missionStatus = 'Fail.'
+        }
+    }
+    document.getElementById('vote_result').innerHTML = missionStatus + ' -- ' + failCount + ' failures.'
+}
+
+function clearVotes(){
+    for(element of document.getElementsByName('vote')) {
+        element.value = ''
+    }
+
+
+function populateBoard(numPlayas){
+    switch(numPlayas) {
+        case 5:
+            document.getElementById('q1').innerHTML = 2
+            document.getElementById('q2').innerHTML = 3
+            document.getElementById('q3').innerHTML = 2
+            document.getElementById('q4').innerHTML = 3
+            document.getElementById('q5').innerHTML = 3
+            break;
+        case 6:
+            document.getElementById('q1').innerHTML = 2
+            document.getElementById('q2').innerHTML = 3
+            document.getElementById('q3').innerHTML = 4
+            document.getElementById('q4').innerHTML = 3
+            document.getElementById('q5').innerHTML = 4
+            break;
+        case 7:
+            document.getElementById('q1').innerHTML = 2
+            document.getElementById('q2').innerHTML = 3
+            document.getElementById('q3').innerHTML = 3
+            document.getElementById('q4').innerHTML = '4 :>/'
+            document.getElementById('q5').innerHTML = 4
+            break;
+        default:
+            document.getElementById('q1').innerHTML = 3
+            document.getElementById('q2').innerHTML = 4
+            document.getElementById('q3').innerHTML = 4
+            document.getElementById('q4').innerHTML = '5 :>/'
+            document.getElementById('q5').innerHTML = 5
+            break;
+    }
+}
+populateBoard(playas.length)
